@@ -49,7 +49,7 @@ pip install numpy scikit-learn pillow
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/JV-Vigneesh/image-kmeans-quantizer.git
+git clone https://github.com/JV-Vigneesh/Image-Color-Quantization-with-K-Means-Clustering.git
 cd image-kmeans-quantizer
 ```
 
