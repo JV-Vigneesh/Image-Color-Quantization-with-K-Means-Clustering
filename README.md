@@ -14,7 +14,12 @@ This project provides a graphical interface to perform **color quantization** on
 
 ## Demo
 
-![Original Image](images/image 4.jpg) <!-- Optional: add a screenshot or GIF link here -->
+
+| <img src="images/image4.jpg" alt="Original Image" width="300" /> | <img src="images/Q1.jpg" alt="Original Image" width="300" /> | <img src="images/Q16.jpg" alt="Original Image" width="300" />| <img src="images/Q64.jpg" alt="Original Image" width="300" /> |
+|-----------------------|-----------------------------|---------------------------|---------------------------|
+| Original Image | k=1 Image | k=16 Image | k=64 Image |  
+
+k = no.of colors
 
 ---
 
