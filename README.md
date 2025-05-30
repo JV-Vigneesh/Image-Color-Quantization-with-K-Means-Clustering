@@ -14,7 +14,7 @@ This project provides a graphical interface to perform **color quantization** on
 
 ## Demo
 
-![Demo GUI Screenshot](#) <!-- Optional: add a screenshot or GIF link here -->
+![Original Image](images/image 4.jpg) <!-- Optional: add a screenshot or GIF link here -->
 
 ---
 
