@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from PIL import Image, ImageTk
-import image_processor as image_processor
+import image_processor
 from kmeans_clustering import KMeansClustering
 import threading
 
@@ -15,6 +15,8 @@ class ImageQuantizationApp:
         self.height = None
         self.width = None
         self.quantised_pixels = None
+        self.pixels = None
+        self.processing_label = None
         self.setup_ui()
 
     def setup_ui(self):
@@ -69,24 +71,42 @@ class ImageQuantizationApp:
             return
 
         if self.pixels is not None:
-            self.processing_label = tk.Label(self.root, text="Processing...", font=('Arial', 12))
-            self.processing_label.place(relx=0.5, rely=0.5, anchor="center")
+            self.show_processing_message()
+            self.disable_buttons()
 
             thread = threading.Thread(target=self.run_quantisation, args=(num_colours,))
             thread.start()
         else:
             messagebox.showerror("Error", "Failed to load the image.")
 
+    def show_processing_message(self):
+        self.processing_label = tk.Label(self.root, text="Processing...", font=('Arial', 12), fg="blue")
+        self.processing_label.place(relx=0.5, rely=0.4, anchor="center")
+
+    def hide_processing_message(self):
+        if self.processing_label:
+            self.processing_label.destroy()
+            self.processing_label = None
+
+    def disable_buttons(self):
+        self.browse_button.config(state="disabled")
+        self.quantise_button.config(state="disabled")
+        self.save_button.config(state="disabled")
+
+    def enable_buttons(self):
+        self.browse_button.config(state="normal")
+        self.quantise_button.config(state="normal")
+        self.save_button.config(state="normal")
+
     def run_quantisation(self, num_colours):
         kmeans = KMeansClustering(num_clusters=num_colours)
-        self.quantised_pixels = kmeans.fit(self.pixels.reshape(-1, 3))
-        self.root.after(0, self.remove_processing_and_show_image)
+        self.quantised_pixels = kmeans.fit(self.pixels)
+        self.root.after(0, self.show_quantised_result)
 
-    def remove_processing_and_show_image(self):
-        if hasattr(self, 'processing_frame'):
-            self.processing_frame.grid_forget()
+    def show_quantised_result(self):
+        self.hide_processing_message()
+        self.enable_buttons()
         self.display_image(self.quantised_pixels, self.quantised_label)
-        self.processing_label.destroy()
 
     def save_quantised_image(self):
         if not self.image_path:
@@ -111,7 +131,7 @@ class ImageQuantizationApp:
             label.configure(image=image)
             label.image = image
         else:
-            messagebox.showerror("Error", "Failed to load the image.")
+            messagebox.showerror("Error", "Failed to create image from pixels.")
 
 
 def run_gui():

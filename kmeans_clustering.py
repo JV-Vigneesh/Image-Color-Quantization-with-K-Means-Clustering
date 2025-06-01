@@ -1,13 +1,5 @@
 import numpy as np
 from sklearn.cluster import MiniBatchKMeans
-import multiprocessing
-
-
-def _quantise_chunk(chunk, num_clusters):
-    """Helper function for multiprocessing."""
-    model = MiniBatchKMeans(n_clusters=num_clusters, random_state=0)
-    labels = model.fit_predict(chunk)
-    return model.cluster_centers_[labels]
 
 
 class KMeansClustering:
@@ -16,13 +8,17 @@ class KMeansClustering:
 
     def fit(self, pixels):
         """
-        Quantise pixels using MiniBatchKMeans with parallel processing.
+        Quantise pixels using MiniBatchKMeans trained on a sampled subset.
         """
-        cpu_count = multiprocessing.cpu_count()
-        chunks = np.array_split(pixels, cpu_count)
+        pixels = pixels.reshape(-1, 3)
+        sample_size = min(10000, len(pixels))
+        sample_indices = np.random.choice(len(pixels), size=sample_size, replace=False)
+        sample_pixels = pixels[sample_indices]
 
-        with multiprocessing.Pool(cpu_count) as pool:
-            results = pool.starmap(_quantise_chunk, [(chunk, self.num_clusters) for chunk in chunks])
+        model = MiniBatchKMeans(n_clusters=self.num_clusters, random_state=42)
+        model.fit(sample_pixels)
 
-        quantised_pixels = np.vstack(results)
+        labels = model.predict(pixels)
+        quantised_pixels = model.cluster_centers_[labels]
+
         return quantised_pixels
